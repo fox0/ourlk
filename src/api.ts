@@ -1,44 +1,35 @@
-import { UserInfo } from "./api_types";
+import { ILoginDto, IOrganizationDto, IResp, IUserDto } from "./api_types";
 
 const API_AUTH_REF = "/account/auth";
-const API_ENTRANTS_REF = "/vo/cabinets/university/entrants-and-applications/entrants";
-const API_APPLICATIONS_REF = "/vo/cabinets/university/entrants-and-applications/applications";
-const API_CG_REF = "/vo/cabinets/university/entrants-and-applications/competition-groups";
+// const API_ENTRANTS_REF = "/vo/cabinets/university/entrants-and-applications/entrants";
+// const API_APPLICATIONS_REF = "/vo/cabinets/university/entrants-and-applications/applications";
+// const API_CG_REF = "/vo/cabinets/university/entrants-and-applications/competition-groups";
 
 export class Api {
-    static async is_login(): Promise<boolean> {
-        let r: UserInfo = await Api.get("/api/account/user/info", API_AUTH_REF);
-        return r.done;
+    /** Проверка залогинен или нет */
+    static async get_user(): Promise<IUserDto> {
+        return await Api.get("/api/account/user/info", API_AUTH_REF);
     }
 
-    // static async login(login, password) {
-    //     let r = await Api.post("/api/account/login", API_AUTH_REF, {
-    //         login: login,
-    //         password: password
-    //     });
-    //     if (!r.done) {
-    //         throw new Error(r);
-    //     }
-    //     return true;
-    // }
+    /** Логин пользователя */
+    static async login(login: FormDataEntryValue, password: FormDataEntryValue): Promise<ILoginDto> {
+        return await Api.post("/api/account/login", API_AUTH_REF, {
+            login: login,
+            password: password
+        });
+    }
 
-    // static async get_organizations() {
-    //     let r = await Api.get("/api/account/organizations", API_AUTH_REF);
-    //     if (!r.done) {
-    //         throw new Error(r);
-    //     }
-    //     return r.data;
-    // }
+    /** Список организаций, доступных пользователю для логина */
+    static async get_organizations(): Promise<IOrganizationDto> {
+        return await Api.get("/api/account/organizations", API_AUTH_REF);
+    }
 
-    // static async set_organizations(id) {
-    //     let r = await Api.post("/api/account/current-org", API_AUTH_REF, {
-    //         id: id
-    //     });
-    //     if (!r.done) {
-    //         throw new Error(r);
-    //     }
-    //     return true;
-    // }
+    /** Установить выбранную организацию (иначе не будет работать) */
+    static async set_organizations(id: number): Promise<IResp> {
+        return await Api.post("/api/account/current-org", API_AUTH_REF, {
+            id: id
+        });
+    }
 
     // static async get_entrants() {
     //     console.log('dump entrants...');
@@ -91,32 +82,38 @@ export class Api {
     // }
 
     static async get(url: string, ref: string): Promise<any> {
-        return fetch(url, {
-            "method": "GET",
-            "referrer": ref,
-            "headers": {
-                "accept": "application/json, text/plain, */*",
-                "cache-control": "no-cache",
-                "pragma": "no-cache"
-            }
-        })
-            .then((response) => response.json())
-            .catch((error) => console.error(error));
+        try {
+            const response = await fetch(url, {
+                "method": "GET",
+                "referrer": ref,
+                "headers": {
+                    "accept": "application/json, text/plain, */*",
+                    "cache-control": "no-cache",
+                    "pragma": "no-cache"
+                }
+            });
+            return await response.json();
+        } catch (error) {
+            return console.error(error);
+        }
     }
 
     static async post(url: string, ref: string, body: any): Promise<any> {
-        return fetch(url, {
-            "method": "POST",
-            "body": JSON.stringify(body),
-            "referrer": ref,
-            "headers": {
-                "accept": "application/json, text/plain, */*",
-                "cache-control": "no-cache",
-                "content-type": "application/json",
-                "pragma": "no-cache",
-            }
-        })
-            .then((response) => response.json())
-            .catch((error) => console.error(error));
+        try {
+            const response = await fetch(url, {
+                "method": "POST",
+                "body": JSON.stringify(body),
+                "referrer": ref,
+                "headers": {
+                    "accept": "application/json, text/plain, */*",
+                    "cache-control": "no-cache",
+                    "content-type": "application/json",
+                    "pragma": "no-cache",
+                }
+            });
+            return await response.json();
+        } catch (error) {
+            return console.error(error);
+        }
     }
 }

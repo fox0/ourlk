@@ -1,23 +1,36 @@
 import { Api } from './api';
-import { DB } from './db';
+import { IUserDto } from './api_types';
+import { AsyncIndexedDB } from './AsyncIndexedDB';
+import { Organizations } from './models';
 import { UI } from './ui';
 
-const g_db = new DB();
+const DB_NAME = "ourLK";
+
+export let g_db: AsyncIndexedDB;
 
 async function init() {
     console.log("init()");
 
-    // UI.clear();
+    UI.clear();
 
-    await g_db.open();
-        let is_login = await Api.is_login();
-        if (!is_login) {
-            console.log("is_login = false");
-            // UI.page9999();
-        } else {
-            console.log("is_login = true");
-            // UI.page1();
+    const schema = (db: IDBDatabase) => {
+        for (let i of [Organizations]) {
+            i.init_db(db);
         }
+    };
+    g_db = new AsyncIndexedDB(DB_NAME, schema, 1);
+    await g_db.open();
+
+    // TODO timer 60 sec / localstorage / 13 min await
+
+    let user: IUserDto = await Api.get_user();
+    if (!user.done) {
+        console.log("is_login = false");
+        UI.page9999();
+    } else {
+        console.log("is_login = true");
+        UI.page1();
+    }
 }
 
 init();
