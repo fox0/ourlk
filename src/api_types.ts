@@ -73,3 +73,63 @@ export interface IResp {
     done: boolean
     message: string
 }
+
+export interface IPaginatorDto {
+    done: boolean
+    data: object[]
+    paginator: IPaginator
+}
+
+export interface IPaginator {
+    total: number
+    count_page: number
+    page: number
+    offset: number
+    limit: number
+}
+
+/** /api/vo/entrants/list + IPaginatorDto */
+export interface IEntrant {
+    id: number
+    id_profile: number
+    snils?: string
+    fio: string
+}
+
+// /** /api/vo/applications/long-list + IPaginatorDto */
+// export interface IApplication {
+//     id: number
+//     id_education_level_group: number
+//     // здесь нет id абитуриента :(
+//     registration_date: string
+//     budget: string
+//     fio: string
+//     short_title: string
+//     shown_on_epgu: string
+//     snils?: string
+//     source: string
+//     stage_admission: string
+// }
+
+/** /api/vo/cg/list + IPaginatorDto */
+export interface ICompetitionGroup {
+    /** PK КГ в заявлении */
+    id_cg: number
+    /** FK заявления? */
+    id: number
+    id_organization: number
+    id_pt: number
+    status: string
+    comment: string
+    education_form: string
+    education_level_name: string
+    fio: string
+    okso: string
+    paid_contract_status?: string
+    place_type: string
+    priority: number
+    short_title: string
+    snils?: string
+    // sport: any
+    stage_admission: string
+}

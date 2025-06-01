@@ -55,21 +55,42 @@ export class AsyncIndexedDB {
     }
 
     insert_many(s: string, rows: object[]): Promise<void> {
+        console.log("insert_many: count=" + rows.length);
+
         const db: IDBDatabase = this.db;
         return new Promise(function(resolve, reject) {
             const transaction = db.transaction([s], "readwrite");
-            // transaction.oncomplete = (event) => {
-            //     console.log("Transaction completed.");
-            // };
-            // transaction.onerror = (event) => {
-            //     console.error(event);
-            // };
+            transaction.oncomplete = (event) => {
+                console.log("Transaction completed.");
+            };
+            transaction.onerror = (event) => {
+                console.error(event);
+            };
             const store = transaction.objectStore(s);
             rows.forEach((i) => {
                 const request = store.add(i);
                 // request.onsuccess = (event) => {
                     //console.log(event.target.result);
                 // };
+            });
+        });
+    }
+
+    merge_many(s: string, rows: object[]): Promise<void> {
+        console.log("merge_many: count=" + rows.length);
+
+        const db: IDBDatabase = this.db;
+        return new Promise(function(resolve, reject) {
+            const transaction = db.transaction([s], "readwrite");
+            transaction.oncomplete = (event) => {
+                console.log("Transaction completed.");
+            };
+            transaction.onerror = (event) => {
+                console.error(event);
+            };
+            const store = transaction.objectStore(s);
+            rows.forEach((i) => {
+                const request = store.put(i);
             });
         });
     }

@@ -1,12 +1,13 @@
 import { Api } from "./api";
 import { ILoginDto, IOrganization, IResp } from "./api_types";
-import { Organizations } from "./models";
+import { CompetitionGroups, Entrants, Organizations } from "./models";
 
 export class UI {
     static clear() {
         console.log("UI.clear()");
 
         document.body.innerHTML = `<h1>ourlk</h1>`;
+        document.title = "ourlk";
     }
 
     static page9999() {
@@ -20,9 +21,12 @@ export class UI {
         <tr><td><input type="submit" value="Login"></td></tr>
     </table>
 </form>`;
+        document.title = "[:9999]";
+
         const form = document.getElementsByTagName("form")[0];
         form.onsubmit = (event) => {
             console.log("page9999.onsubmit()");
+
             event.preventDefault();
             const fd = new FormData(form);
             const login = fd.get("login");
@@ -54,47 +58,9 @@ export class UI {
         console.log("UI.page1()");
 
         document.body.innerHTML = `<h1>ourlk</h1>`;
+        document.title = "[:1]";
+
+        Entrants.sync();
+        // CompetitionGroups.sync();
     }
 }
-
-// const API_ENTRANTS_URL = "/api/vo/entrants/list";
-// const API_APPLICATIONS_URL = "/api/vo/applications/long-list";
-// const API_CG_URL = "/api/vo/cg/list";
-
-// const DB_NAME = "ourLK";
-// const DB_ORGANIZATIONS = "organizations";
-// const DB_ENTRANTS = "entrants";
-
-// class Entrants {
-//     static async sync() {
-//         console.debug("Entrants.sync()");
-//         const count1 = await Api.get_entrants_count();
-//         const count2 = await DB.get_entrants_count();
-//         console.log("entrants: api=" + count1 + " db=" + count2);
-//         if (count1 === count2) {
-//             return;
-//         }
-//         const result = await Api.get_entrants();
-
-//         const transaction = g_db.transaction([DB_ENTRANTS], "readwrite");
-//         transaction.oncomplete = (event) => {
-//             console.log("Transaction completed.");
-//         };
-//         transaction.onerror = (event) => {
-//             console.error(event);
-//         };
-//         const store = transaction.objectStore(DB_ENTRANTS);
-//         result.forEach((i) => {
-//             const request = store.get(i.id);
-//             request.onsuccess = (event) => {
-//                 if (request.result == undefined) {
-//                     const request = store.add(i);
-//                     request.onsuccess = (event) => {
-//                         //console.log(event.target.result);
-//                     };
-//                 }
-//             };
-//         });
-//         // transaction.commit();
-//     }
-// }
