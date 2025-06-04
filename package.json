@@ -8,14 +8,16 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production"
   },
-  "devDependencies": {
-    "ts-loader": "^9.5.2",
-    "webpack": "^5.99.9",
-    "webpack-cli": "^6.0.1"
-  },
   "main": "src/index.ts",
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "ts-loader": "^9.5.2",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
+  }
 }

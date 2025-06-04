@@ -1,6 +1,6 @@
 import { g_db } from ".";
 import { Api } from "./api";
-import { ICompetitionGroup, IEntrant, IOrganization, IOrganizationDto } from "./api_types";
+import { ICompetitionGroup, IEntrant, IEntrantExtra, IOrganization, IOrganizationDto } from "./api_types";
 
 // abstract class Model {
 //     abstract init_db(db: IDBDatabase): void;
@@ -37,6 +37,8 @@ export class Organizations { // implements Model {
     }
 }
 
+export type IEntrantDB = IEntrant & IEntrantExtra;
+
 export class Entrants {
     static store = "entrant";
 
@@ -56,8 +58,24 @@ export class Entrants {
         if (count1 === count2) {
             return;
         }
-        const result: IEntrant[] = await Api.get_entrants();
+
+        let result: IEntrantDB[] = [];
+        for (var i of await Api.get_entrants()) {
+            const t = await g_db.get(this.store, i.id);
+            if (t === undefined) {
+                let r = await Api.get_entrant(i.id) as IEntrantDB;
+                r.fio = i.fio;
+                r.id_profile = i.id_profile;
+                result.push(r);
+            }
+        }
+        // console.log(result);
+
         await g_db.merge_many(this.store, result);
+    }
+
+    static async all(): Promise<IEntrantDB[]> {
+        return await g_db.all(this.store) as IEntrantDB[];
     }
 }
 

@@ -1,6 +1,6 @@
 import { Api } from "./api";
 import { ILoginDto, IOrganization, IResp } from "./api_types";
-import { CompetitionGroups, Entrants, Organizations } from "./models";
+import { Entrants, IEntrantDB, Organizations } from "./models";
 
 export class UI {
     static clear() {
@@ -60,7 +60,87 @@ export class UI {
         document.body.innerHTML = `<h1>ourlk</h1>`;
         document.title = "[:1]";
 
-        Entrants.sync();
-        // CompetitionGroups.sync();
+        document.body.innerHTML = `
+<link href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/columncontrol/1.0.3/css/columnControl.dataTables.min.css" rel="stylesheet">
+<style>
+div.dt-container {
+    width: 100%;
+    padding: 0.5rem;
+}
+</style>
+<table id="table" class="display" width="100%"></table>
+`;
+
+        (async () => {
+            Entrants.sync();
+            let result: IEntrantDB[] = await Entrants.all();
+
+            let dataSet: (string | number)[][] = [];
+            result.forEach((i) => {
+                dataSet.push([
+                    i.id,
+                    i.id_profile,
+                    i.fio,
+                    i.gave_approve ? 'Да' : 'Нет',
+                    // i.snils,
+                ]);
+            })
+
+            // https://datatables.net/
+            // @ts-ignore
+            $('#table').dataTable({
+                columns: [
+                    { title: 'id' },
+                    { title: 'Уникальный идентификатор поступающего' },
+                    { title: 'ФИО' },
+                    { title: 'Наличие согласия' },
+                    // { title: 'snils' },
+                ],
+                data: dataSet,
+
+                responsive: true,
+                stateSave: true,
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/2.3.1/i18n/ru.json',
+                },
+                ordering: {
+                    handler: false,
+                    indicators: false
+                },
+                columnDefs: [
+                    {
+                        targets: [2,3],
+                        columnControl: {
+                            target: 0,
+                            className: 'dtcc-row_no-bottom-border',
+                            content: [
+                                'order',
+                                [
+                                    // 'orderAsc', 'orderDesc',
+                                    // 'spacer',
+                                    'searchList'
+                                ]
+                            ]
+                        }
+                    }
+                ],
+                columnControl: [
+                    {
+                        target: 0,
+                        className: 'dtcc-row_no-bottom-border',
+                        content: [
+                            'order',
+                            // ['title', 'orderAsc', 'orderDesc']
+                        ]
+                    },
+                    {
+                        target: 1,
+                        className: 'dtcc-row_no-top-padding',
+                        content: ['search']
+                    }
+                ],
+            });
+        })();
     }
 }

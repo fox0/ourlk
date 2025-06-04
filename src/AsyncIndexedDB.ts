@@ -54,6 +54,19 @@ export class AsyncIndexedDB {
         });
     }
 
+
+    get(s: string, id: any): Promise<object | undefined> {
+        const db: IDBDatabase = this.db;
+        return new Promise(function(resolve, reject) {
+            const transaction = db.transaction([s], "readonly");
+            const store = transaction.objectStore(s);
+            const request = store.get(id);
+            request.onsuccess = () => {
+                resolve(request.result);
+            };
+        });
+    }
+
     insert_many(s: string, rows: object[]): Promise<void> {
         console.log("insert_many: count=" + rows.length);
 

@@ -133,3 +133,41 @@ export interface ICompetitionGroup {
     // sport: any
     stage_admission: string
 }
+
+export interface IDto {
+    done: boolean
+    message?: string
+    data?: object
+}
+
+/** /api/vo/entrants/<id>/consent-entrants + IDto */
+export interface IEntrantExtra {
+    id: number
+    id_base_education: any
+    id_document_type: number
+    id_free_education_reason: any
+    id_gender: number
+    id_head_profile: number
+    id_oksm_person: number
+    id_photo_file: any
+    id_reason_missing_snils: any
+    availability_edu_doc: any
+    birthday: string
+    birthplace: string
+    created_at: string
+    date_availability_edu_doc: any
+    doc_number: string
+    doc_series: string
+    document_type_name: string
+    email: any
+    esia_id: any
+    gave_approve: boolean
+    issue_date: string
+    name: string
+    name_base_educations: string
+    name_gender: string
+    patronymic: string
+    phone: any
+    snils: string
+    surname: string
+}

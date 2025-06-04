@@ -1,4 +1,4 @@
-import { ILoginDto, IOrganizationDto, IResp, IUserDto, IPaginator, IPaginatorDto, ICompetitionGroup, IEntrant } from "./api_types";
+import { ILoginDto, IOrganizationDto, IResp, IUserDto, IPaginator, IPaginatorDto, ICompetitionGroup, IEntrant, IDto, IEntrantExtra } from "./api_types";
 
 const API_AUTH_REF = "/account/auth";
 const API_ENTRANTS_REF = "/vo/cabinets/university/entrants-and-applications/entrants";
@@ -58,6 +58,17 @@ export class Api {
         console.log('dump appcg...');
         let r = await Api.paginator("/api/vo/cg/list", API_APPCG_REF, 20); // only
         return r as ICompetitionGroup[];
+    }
+
+    static async get_entrant(id: number): Promise<IEntrantExtra> {
+        let r: IDto = await Api.get(
+            "/api/vo/entrants/" + id + "/info",
+            "/vo/cabinets/university/entrants-and-applications/entrants/" + id + "/info/personal"
+        );
+        if (!r.done) {
+            throw new Error(r as any);
+        }
+        return r.data as IEntrantExtra;
     }
 
     static async paginator(url: string, ref: string, limit: number): Promise<object[]> {
